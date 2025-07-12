@@ -1,39 +1,48 @@
+import argparse
 from PIL import Image
 from string import ascii_letters, digits
 
-def main():
-    path = input("path to image: ")
-    new_file_name = input("new file name: ").strip().replace(" ", "-")
-
+def sanitize_filename(name):
     safe_chars = ascii_letters + digits + "-_."
-    new_file_name = "".join(char for char in new_file_name if char in safe_chars)
+    return "".join(c for c in name if c in safe_chars)
 
-    # if new_file_name is empty after sanitizing
-    if not new_file_name:
-        print("INFO: After sanitazion of your filename it came out empty, default filename assigned")
-        new_file_name = "image"
+def main():
+    parser = argparse.ArgumentParser(description="Convert image to ASCII art.")
+    parser.add_argument("image_path", nargs="?", help="Path to the input image (optional)")
+    parser.add_argument("--output", "-o", help="Name of the output .txt file (optional)")
 
-    print(f"INFO: Sanitized filename: {new_file_name}")
+    args = parser.parse_args()
 
+    # If not provided via CLI, ask interactively
+    image_path = args.image_path or input("Path to image: ").strip()
+    output_name = args.output or input("Output file name: ").strip()
+
+    # Sanitize output file name
+    output_name = sanitize_filename(output_name)
+    if not output_name:
+        print(f"INFO: After sanitazion filename end up empty, default filename asigned")
+        output_name = "image"
+    print(f"INFO: Sanitized filename: {output_name}")
+
+    # Try to load image
     try:
-        image = Image.open(path)
-    except:
-        print("ERROR: Unable to load image")
+        image = Image.open(image_path)
+    except Exception as e:
+        print(f"ERROR: Unable to load image: {e}")
         return
 
     pix = image.load()
-
     width, height = image.size
-    symbols=" .:-=+*#%@"
+    symbols = " .:-=+*#%@"
 
-    with open(f"{new_file_name}.txt","w") as f:
+    with open(f"{output_name}.txt", "w") as f:
         for y in range(height):
             for x in range(width):
-                r, g, b = pix[x, y][:3]  # Extract RGB values
-                average_brightness = (r + g + b) / 3
-                symbol_index = int(average_brightness / (255 / (len(symbols) - 1)))
-                ascii_char = symbols[symbol_index]
-                f.write(ascii_char + "  ")  # Two spaces to preserve aspect ratio
+                r, g, b = pix[x, y][:3]
+                avg = (r + g + b) / 3
+                idx = int(avg / (255 / (len(symbols) - 1)))
+                char = symbols[idx]
+                f.write(char + "  ")
             f.write("\n")
 
 if __name__ == "__main__":

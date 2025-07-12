@@ -2,6 +2,8 @@
 
 This simple Python script converts an image into ASCII art using grayscale brightness and maps it to a set of characters.
 
+Supports both **CLI arguments** and **interactive prompts**, so you can run it however you prefer.
+
 ---
 
 ## Features
@@ -9,6 +11,7 @@ This simple Python script converts an image into ASCII art using grayscale brigh
 - Converts color images to ASCII based on brightness
 - Automatically sanitizes and validates filenames
 - Preserves aspect ratio with spacing
+- Supports **CLI arguments** (non-interactive) and **input() fallback** (interactive)
 - Easy to run — just provide an image path and output name
 
 ---
@@ -42,12 +45,20 @@ pip install -r requirements.txt
 
 ---
 
-## Example
+## Usage
+
+### Option 1: Interactive prompts
 ```bash
 \image-to-ASCII-art-convertor> python main.py
 path to image: cat.jpg
 new file name: cat ascii 😼
 INFO: Sanitized filename: cat-ascii
+```
+
+### Option 2: CLI arguments
+```bash
+\image-to-ASCII-art-convertor> python main.py path/to/image.png --output ascii-art-name
+INFO: Sanitized filename: ascii-art-name
 ```
 
 ## Included Examples
